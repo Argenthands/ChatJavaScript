@@ -14,3 +14,7 @@ export const saveNotes = (title, description)=>{
 export const onNewNote = (callback) =>{
     socket.on('server:newnote', callback)
 }
+
+export const deleteNote = id =>{
+    socket.emit('client:deletenote', id)
+}

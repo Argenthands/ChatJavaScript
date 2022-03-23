@@ -4,7 +4,7 @@ export default (io)=>{
 
         const emitNotes = async ()=>{
             const notes = await Note.find()
-            
+           
             io.emit('server:loadnotes',notes)
         }
         emitNotes()
@@ -12,7 +12,12 @@ export default (io)=>{
         socket.on('client:newnote', async data =>{
             const newNote = new Note(data)
             const saveNote = await newNote.save()
-            socket.emit('server:newnote', saveNote)
+            io.emit('server:newnote', saveNote)
+        })
+
+        socket.on('client:deletenote', async id =>{
+            await Note.findByIdAndDelete(id)
+            emitNotes()
         })
     })
 }
