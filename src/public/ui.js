@@ -1,7 +1,15 @@
 //user interface
-import { saveNotes, deleteNote } from './sokets.js'
+import {
+    saveNotes,
+    deleteNote,
+    getNoteById,
+    updateNote
+} from './sokets.js'
 
 const noteList = document.querySelector('#notes')
+const title = document.querySelector('#title')
+const description = document.querySelector('#description')
+let saveID = ""
 
 const noteUI = note =>{
     const div = document.createElement('div')
@@ -12,7 +20,7 @@ const noteUI = note =>{
             </h1>
             <div>
                 <button class="delete" data-id="${note._id}">Delete</button>
-                <button class="update">Update</button>
+                <button class="update" data-id="${note._id}">Update</button>
             </div>
             <p>
                 ${note.description}
@@ -20,9 +28,17 @@ const noteUI = note =>{
         </div>
     `
     const btnDelete = div.querySelector('.delete')
-    btnDelete.addEventListener('click', (e) =>{
+    const btnUpdate = div.querySelector('.update')
+
+    btnDelete.addEventListener('click', (e)=>{
         deleteNote(btnDelete.dataset.id)
     })
+
+    btnUpdate.addEventListener('click', (e)=>{
+        getNoteById(btnUpdate.dataset.id)
+        //updateNote(btnUpdate.dataset.id)
+    })
+
     return div
 }
 
@@ -33,12 +49,26 @@ export const renderNotes = (notes)=>{
     })
 }
 
+export const fillForm = note =>{
+    title.value = note.title
+    description.value = note.description
+    saveID = note._id
+}
+
 export const onHandleSubmit = (e) =>{
     e.preventDefault()
-    saveNotes(
-        noteForm['title'].value,
-        noteForm['description'].value
-    )
+    if(saveID){
+        updateNote(saveID, title.value, description.value)
+    }else{
+        saveNotes(
+            title.value,
+            description.value
+        )
+    }
+    saveID = ''
+    title.value = ''
+    description.value = ''
+
 }
 
 export const appendNote = (note) =>{
